@@ -63,5 +63,5 @@ class RedditExtractor(DataExtractor):
             return dataframe
         
         except Exception as e:
-            print("The URL you entered seems invalid. Please enter a valid YouTube URL.")
+            print("The URL you entered seems invalid. Please enter a valid Reddit URL.")
             sys.exit()

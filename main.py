@@ -1,5 +1,4 @@
 import json
-from pathlib import Path
 from data_modules import connection
 from data_modules import extraction
 from data_modules import transformation
@@ -7,42 +6,45 @@ from utility_modules import utils
 
 # add if condition to check if user has setup credentials here
 secrets = json.load(open('./config/secrets.json'))
+cliArguments = utils.parseCliArguments()
 
-def main():
 
-    cliArguments = utils.parseCliArguments()
+def read_url_parser(url) -> utils.URLParser:
+    url_parser_factories = {
+        "reddit": utils.RedditUrlParser(url),
+        "youtube": utils.YoutubeUrlParser(url)
+    }
+    return url_parser_factories[cliArguments.client]
 
-    if cliArguments.client == 'reddit':
-        thread_url = utils.URLParser(cliArguments.url).parseRedditUrl()
-        redditClient = connection.RedditApiConnector(
+
+def read_connector() -> connection.ApiConnector:
+    api_connector_factories = {
+        "reddit": connection.RedditApiConnector(
                                     use_script=secrets['reddit_use_script'],
                                     client_secret=secrets['reddit_client_secret'],
                                     user_agent=secrets['reddit_user_agent'],
                                     username=secrets['reddit_username'],
-                                    password=secrets['reddit_password']).connect()
-        
-        rawCommentsDataFrame = extraction.RedditExtractor(client=redditClient).fetchRawCommentsDataFrame(url=thread_url)
-
-        if cliArguments.raw_data == 'true':
-            return rawCommentsDataFrame
-        else:
-            return transformation.RedditDataCleaner(rawCommentsDataFrame)
+                                    password=secrets['reddit_password']),
+        "youtube": connection.YoutubeApiConnector(api_key=secrets['youtube_api_key'])
+    }
+    return api_connector_factories[cliArguments.client]
 
 
-    elif cliArguments.client == 'youtube':
-        youtube_video_id = utils.URLParser(cliArguments.url).parseYoutubeUrl()
-        youtubeClient = connection.YoutubeApiConnector(api_key=secrets['youtube_api_key']).connect()
+def read_extractor(client) -> extraction.DataExtractor:
+    data_extractor_factories = {
+        "reddit": extraction.RedditExtractor(client=client),
+        "youtube": extraction.YoutubeExtractor(client=client)
+    }
+    return data_extractor_factories[cliArguments.client]
 
-        rawCommentsDataFrame = extraction.YoutubeExtractor(client=youtubeClient).fetchRawCommentsDataFrame(url=youtube_video_id)
 
-        if cliArguments.raw_data == 'true':
-            return rawCommentsDataFrame
-        else:
-            return transformation.YoutubeDataCleaner(rawCommentsDataFrame)
-    
+def main():
+    client = read_connector().connect()
+    url = read_url_parser(cliArguments.url).parseUrl()
+    raw_dataframe = read_extractor(client).fetchRawCommentsDataFrame(url)
 
-    else:
-        print('The client you entered is not supported.')
+    print(raw_dataframe.head(5))
+
 
 if __name__ == "__main__":
     main()
