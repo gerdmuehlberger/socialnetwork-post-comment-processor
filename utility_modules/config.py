@@ -17,23 +17,24 @@ class RedditCredentialSetup(CredentialsConfigurator):
     
     def set_credentials(self) -> None:
         credentials ={}
-        print("Please enter your reddit use script:")
+        print("You can set up your credentials here: https://old.reddit.com/prefs/apps/\nFor help, please refer to: https://praw.readthedocs.io/en/latest/getting_started/quick_start.html#\n")
+        print("Enter reddit use script:")
         use_script = input()
         credentials['reddit_use_script'] = use_script
         
-        print("Please enter your reddit client secret:")
+        print("Enter reddit client secret:")
         client_secret = input()
         credentials['reddit_client_secret'] = client_secret
 
-        print("Please enter your reddit user agent:")
+        print("Enter reddit user agent:")
         user_agent = input()
         credentials['reddit_user_agent'] = user_agent
 
-        print("Please enter your reddit username:")
+        print("Enter reddit username:")
         username = input()
         credentials['reddit_username'] = username
 
-        print("Please enter your reddit password:")
+        print("Enter reddit password:")
         password = input()
         credentials['reddit_password'] = password
 
@@ -47,7 +48,8 @@ class YoutubeCredentialSetup(CredentialsConfigurator):
 
     def set_credentials(self) -> None:
         credentials = {}
-        print("Please enter your youtube API key.")
+        print("You can set up your YouTube API Key here: https://console.cloud.google.com/apis/dashboard\nFor help, please refer to: https://developers.google.com/youtube/v3/docs\n")
+        print("Enter youtube API key:")
         api_key = input()
         credentials['youtube_api_key'] = api_key
         

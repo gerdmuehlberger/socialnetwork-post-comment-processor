@@ -21,51 +21,47 @@ def parse_cli_arguments():
 
 class URLParser(ABC):
     @abstractmethod
-    def __init__(self, url) -> None:
-        self.url = url
-    
-    @abstractmethod
-    def parse_url() -> str:
+    def parse_url(self, url) -> str:
         pass
 
 
 class HostParser(URLParser):
-    def __init__(self, url) -> None:
-        super().__init__(url)
+    def __init__(self) -> None:
+        super().__init__()
 
-    def parse_url(self) -> str:
-        return urlparse(self.url).netloc
+    def parse_url(self, url) -> str:
+        return urlparse(url).netloc
 
 
 class DomainParser(URLParser):
-    def __init__(self, url) -> None:
-        super().__init__(url)
+    def __init__(self) -> None:
+        super().__init__()
     
-    def parse_url(self) -> str:
-        return extract(self.url).domain
+    def parse_url(self, url) -> str:
+        return extract(url).domain
 
 
 class YoutubeUrlParser(URLParser):
-    def __init__(self, url) -> None:
-        super().__init__(url)
+    def __init__(self) -> None:
+        super().__init__()
     
-    def parse_url(self) -> str:
+    def parse_url(self, url) -> str:
         try: 
             # returns video id from youtube url
-            return re.search(r"(?:v=|\/)([0-9A-Za-z_-]{11}).*", self.url).group(1)
+            return re.search(r"(?:v=|\/)([0-9A-Za-z_-]{11}).*", url).group(1)
         except Exception as e:
             print("The URL you entered seems invalid. Please enter a valid YouTube URL.")
             sys.exit()
 
 
 class RedditUrlParser(URLParser):
-    def __init__(self, url) -> None:
-        super().__init__(url)
+    def __init__(self) -> None:
+        super().__init__()
 
-    def parse_url(self) -> str:
-        response = requests.get(self.url)
+    def parse_url(self, url) -> str:
+        response = requests.get(url)
         if response.status_code == 200:
-            return self.url
+            return url
         else:
             print("The URL you entered seems invalid. Please enter a valid Reddit URL.")
             sys.exit()
