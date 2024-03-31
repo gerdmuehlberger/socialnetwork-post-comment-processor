@@ -10,9 +10,8 @@ else:
     print("secrets not set up.")
 
 secrets = json.load(open('./config/secrets.json'))
-cliArguments = utils.parseCliArguments()
-domain = utils.DomainParser(cliArguments.url).getDomain()
-
+cliArguments = utils.parse_cli_arguments()
+domain = utils.DomainParser(cliArguments.url).parse_url()
 
 def read_url_parser(url) -> utils.URLParser:
     try:
@@ -54,8 +53,8 @@ def read_extractor(client) -> extraction.DataExtractor:
 
 def main():
     client = read_connector().connect()
-    url = read_url_parser(cliArguments.url).parseUrl()
-    raw_dataframe = read_extractor(client).fetchRawCommentsDataFrame(url)
+    url = read_url_parser(cliArguments.url).parse_url()
+    raw_dataframe = read_extractor(client).fetch_raw_comments_dataframe(url)
 
     print(raw_dataframe.head(5))
 

@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 from utility_modules import exceptions
 
 
-def parseCliArguments():
+def parse_cli_arguments():
     parser = argparse.ArgumentParser(
                         prog='social network post analysing cli tool',
                         description='analyse the mood of users in social media posts',
@@ -22,13 +22,17 @@ class URLParser(ABC):
     @abstractmethod
     def __init__(self, url) -> None:
         self.url = url
+    
+    @abstractmethod
+    def parse_url():
+        pass
 
 
 class DomainParser(URLParser):
     def __init__(self, url) -> None:
         super().__init__(url)
 
-    def getDomain(self) -> str:
+    def parse_url(self) -> str:
         return urlparse(self.url).netloc
 
 
@@ -36,7 +40,7 @@ class YoutubeUrlParser(URLParser):
     def __init__(self, url) -> None:
         super().__init__(url)
     
-    def parseUrl(self) -> str:
+    def parse_url(self) -> str:
         try: 
             # returns video id from youtube url
             return re.search(r"(?:v=|\/)([0-9A-Za-z_-]{11}).*", self.url).group(1)
@@ -49,7 +53,7 @@ class RedditUrlParser(URLParser):
     def __init__(self, url) -> None:
         super().__init__(url)
 
-    def parseUrl(self) -> str:
+    def parse_url(self) -> str:
         response = requests.get(self.url)
         if response.status_code == 200:
             return self.url

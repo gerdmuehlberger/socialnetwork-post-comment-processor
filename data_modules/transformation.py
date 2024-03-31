@@ -8,19 +8,19 @@ class DataTransformer(ABC):
         self.dataframe = dataframe
 
     @abstractmethod
-    def removeNullValues(self) -> pd.DataFrame:
+    def remove_null_values(self) -> pd.DataFrame:
         dataframe = self.dataframe
         dataframe = dataframe.dropna(how='any', axis=0)
         return dataframe
 
     @abstractmethod
-    def removeEmojisFromText(self) -> pd.DataFrame:
+    def remove_emojis_from_text(self) -> pd.DataFrame:
         dataframe = self.dataframe
         dataframe = dataframe.astype(str).apply(lambda x: x.str.encode('ascii', 'ignore').str.decode('ascii'))
         return dataframe
 
     @abstractmethod
-    def noiseRemoval(dataframe:pd.DataFrame) -> pd.DataFrame:
+    def noise_removal(dataframe:pd.DataFrame) -> pd.DataFrame:
         pass
 
 
@@ -29,13 +29,13 @@ class YoutubeDataCleaner(DataTransformer):
         super().__init__(dataframe=dataframe)
         self.dataframe = dataframe
 
-    def removeNullValues(self) -> pd.DataFrame:
+    def remove_null_values(self) -> pd.DataFrame:
         pass
     
-    def removeEmojisFromText(self) -> pd.DataFrame:
+    def remove_emojis_from_text(self) -> pd.DataFrame:
         pass
     
-    def noiseRemoval(self) -> pd.DataFrame:
+    def noise_removal(self) -> pd.DataFrame:
         pass
 
 
@@ -44,11 +44,11 @@ class RedditDataCleaner(DataTransformer):
         super().__init__(dataframe=dataframe)
         self.dataframe = dataframe
 
-    def removeNullValues(self) -> pd.DataFrame:
-        return super().removeNullValues()
+    def remove_null_values(self) -> pd.DataFrame:
+        return super().remove_null_values()
         
-    def removeEmojisFromText(self) -> pd.DataFrame:
-        return super().removeEmojisFromText()
+    def remove_emojis_from_text(self) -> pd.DataFrame:
+        return super().remove_emojis_from_text()
     
-    def noiseRemoval(self) -> pd.DataFrame:
-        return super().noiseRemoval()
+    def noise_removal(self) -> pd.DataFrame:
+        return super().noise_removal()

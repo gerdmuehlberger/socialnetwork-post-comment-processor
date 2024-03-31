@@ -6,7 +6,7 @@ from utility_modules import exceptions
 
 class DataExtractor(ABC):
     @abstractmethod
-    def fetchRawCommentsDataFrame(url:str) -> pd.DataFrame:
+    def fetch_raw_comments_dataframe(url:str) -> pd.DataFrame:
         pass
 
 
@@ -16,7 +16,7 @@ class YoutubeExtractor(DataExtractor):
         self.client = client
 
 
-    def fetchRawCommentsDataFrame(self, url:str) -> pd.DataFrame:
+    def fetch_raw_comments_dataframe(self, url:str) -> pd.DataFrame:
         try:
             request = self.client.commentThreads().list(
                 part = "snippet",
@@ -47,7 +47,7 @@ class RedditExtractor(DataExtractor):
         self.client = client
 
 
-    def fetchRawCommentsDataFrame(self, url:str) -> pd.DataFrame:
+    def fetch_raw_comments_dataframe(self, url:str) -> pd.DataFrame:
         try:
             submission = self.client.submission(url=url)
             submissionList = []
