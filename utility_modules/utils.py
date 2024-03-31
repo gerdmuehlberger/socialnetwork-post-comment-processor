@@ -3,6 +3,7 @@ import sys
 import requests
 import argparse
 from urllib.parse import urlparse
+from tldextract import extract
 from abc import ABC, abstractmethod
 from utility_modules import exceptions
 
@@ -24,16 +25,24 @@ class URLParser(ABC):
         self.url = url
     
     @abstractmethod
-    def parse_url():
+    def parse_url() -> str:
         pass
 
 
-class DomainParser(URLParser):
+class HostParser(URLParser):
     def __init__(self, url) -> None:
         super().__init__(url)
 
     def parse_url(self) -> str:
         return urlparse(self.url).netloc
+
+
+class DomainParser(URLParser):
+    def __init__(self, url) -> None:
+        super().__init__(url)
+    
+    def parse_url(self) -> str:
+        return extract(self.url).domain
 
 
 class YoutubeUrlParser(URLParser):

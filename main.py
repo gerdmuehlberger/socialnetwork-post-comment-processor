@@ -1,17 +1,36 @@
 import json
+import sys
 import os.path
 from data_modules import connection
 from data_modules import extraction
 from utility_modules import utils
+from utility_modules import config
 
-if os.path.isfile('./config/secrets.json'):
-    print("secrets set up.")
-else:
-    print("secrets not set up.")
 
-secrets = json.load(open('./config/secrets.json'))
 cliArguments = utils.parse_cli_arguments()
+host = utils.HostParser(cliArguments.url).parse_url()
 domain = utils.DomainParser(cliArguments.url).parse_url()
+
+
+def read_setup_client():
+    credential_setup_factories = {
+        "reddit": config.RedditCredentialSetup(),
+        "youtube": config.YoutubeCredentialSetup()
+    }
+    return credential_setup_factories[domain]
+
+
+if os.path.isfile(f'./config/{domain}_config.json'):
+    pass
+else:
+    print(f"Could not find config file for {domain} API client.\n")
+    print(f"Please set up your credentials for the {domain} API client first.")
+    config_setup_client = read_setup_client()
+    config_setup_client.set_credentials()
+
+
+client_config_file = json.load(open(f'./config/{domain}_config.json'))
+
 
 def read_url_parser(url) -> utils.URLParser:
     try:
@@ -19,7 +38,7 @@ def read_url_parser(url) -> utils.URLParser:
             "www.reddit.com": utils.RedditUrlParser(url),
             "www.youtube.com": utils.YoutubeUrlParser(url)
         }
-        return url_parser_factories[domain]
+        return url_parser_factories[host]
     except KeyError as e:
         raise e
 
@@ -27,15 +46,10 @@ def read_url_parser(url) -> utils.URLParser:
 def read_connector() -> connection.ApiConnector:
     try:
         api_connector_factories = {
-            "www.reddit.com": connection.RedditApiConnector(
-                                        use_script=secrets['reddit_use_script'],
-                                        client_secret=secrets['reddit_client_secret'],
-                                        user_agent=secrets['reddit_user_agent'],
-                                        username=secrets['reddit_username'],
-                                        password=secrets['reddit_password']),
-            "www.youtube.com": connection.YoutubeApiConnector(api_key=secrets['youtube_api_key'])
+            "www.reddit.com": connection.RedditApiConnector(),
+            "www.youtube.com": connection.YoutubeApiConnector()
         }
-        return api_connector_factories[domain]
+        return api_connector_factories[host]
     except KeyError as e:
         raise e
 
@@ -46,13 +60,13 @@ def read_extractor(client) -> extraction.DataExtractor:
             "www.reddit.com": extraction.RedditExtractor(client=client),
             "www.youtube.com": extraction.YoutubeExtractor(client=client)
         }
-        return data_extractor_factories[domain]
+        return data_extractor_factories[host]
     except KeyError as e:
         raise e
 
 
 def main():
-    client = read_connector().connect()
+    client = read_connector().connect(config_file=client_config_file)
     url = read_url_parser(cliArguments.url).parse_url()
     raw_dataframe = read_extractor(client).fetch_raw_comments_dataframe(url)
 
