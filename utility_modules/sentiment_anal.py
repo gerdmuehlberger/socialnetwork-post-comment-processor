@@ -15,11 +15,11 @@ class SentimentProvider(ABC):
         super().__init__()
 
     @abstractmethod
-    def get_label(self, string_to_classify: str) -> str:
+    def infer_label(self, string_to_classify: str) -> str:
         return ""
 
     @abstractmethod
-    def get_sentiment_score(self, string_to_score: str) -> float:
+    def infer_score(self, string_to_score: str) -> float:
         return 0.
 
     def infer_labels_and_scores(
@@ -28,9 +28,10 @@ class SentimentProvider(ABC):
             text_column: str = 'text'
     ) -> DataFrame:
         dataframe['sentiment_label'] = dataframe[text_column].apply(
-            lambda x: self.get_label(x))
+            lambda x: self.infer_label(x))
         dataframe['sentiment_score'] = dataframe[text_column].apply(
-            lambda x: self.get_sentiment_score(x))
+            lambda x: self.infer_score(x))
+        return dataframe
 
 
 class DistillBertSentimentProvider(SentimentProvider):
@@ -59,7 +60,7 @@ class DistillBertSentimentProvider(SentimentProvider):
         result = self._cached_sentiment_analysis(string_to_classify)
         return result['label']
 
-    def infer_sentiment_score(self, string_to_score: str) -> float:
+    def infer_score(self, string_to_score: str) -> float:
         result = self._cached_sentiment_analysis(string_to_score)
         return result['score']
 
