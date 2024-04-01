@@ -15,13 +15,12 @@ else:
     config_setup_client.set_credentials()
 
 
-client_config_file = json.load(open(f'./config/{DOMAIN}_config.json'))
-
-
 def main():
-    client = factories.get_connector().connect(config_file=client_config_file)
+    config = json.load(open(f'./config/{DOMAIN}_config.json'))
+    client = factories.get_connector().connect(config_file=config)
     url = factories.get_url_parser().parse_url(CLI_ARGUMENTS.url)
     extractor = factories.get_extractor(client)
+
     raw_dataframe = extractor.fetch_raw_comments_dataframe(url)
     cleaned_dataframe = factories.get_data_cleaner().clean_data(raw_dataframe)
     sentiment_provider = factories.get_sentiment_provider(
@@ -30,6 +29,7 @@ def main():
     dataframe_with_sentiment = sentiment_provider.infer_labels_and_scores(
         cleaned_dataframe
     )
+    
     app.run_app(dataframe=dataframe_with_sentiment)
 
 

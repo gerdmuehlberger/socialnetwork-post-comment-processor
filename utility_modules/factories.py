@@ -1,11 +1,10 @@
-from pandas import DataFrame
+from utility_modules.constants import HOST, DOMAIN
 from data_modules import connection
 from data_modules import extraction
 from data_modules import transformation
-from utility_modules import utils
+from data_modules import sentiment_analysis
+from utility_modules import parsers
 from utility_modules import config
-from utility_modules.constants import HOST, DOMAIN
-from utility_modules.sentiment_anal import CachedSentimentProvider, DistillBERTSentimentProvider, RoBERTaSentimentProvider
 
 
 def get_setup_client() -> config.CredentialsConfigurator:
@@ -16,11 +15,11 @@ def get_setup_client() -> config.CredentialsConfigurator:
     return credential_setup_factories[DOMAIN]
 
 
-def get_url_parser() -> utils.URLParser:
+def get_url_parser() -> parsers.URLParser:
     try:
         url_parser_factories = {
-            "www.reddit.com": utils.RedditUrlParser(),
-            "www.youtube.com": utils.YoutubeUrlParser()
+            "www.reddit.com": parsers.RedditUrlParser(),
+            "www.youtube.com": parsers.YoutubeUrlParser()
         }
         return url_parser_factories[HOST]
     except KeyError as e:
@@ -60,9 +59,9 @@ def get_extractor(client) -> extraction.DataExtractor:
         raise e
 
 
-def get_sentiment_provider(provider_type: str) -> CachedSentimentProvider:
+def get_sentiment_provider(provider_type: str) -> sentiment_analysis.CachedSentimentProvider:
     if provider_type.lower() == "distillbert":
-        return DistillBERTSentimentProvider()
+        return sentiment_analysis.DistillBERTSentimentProvider()
     elif provider_type.lower() == "roberta":
-        return RoBERTaSentimentProvider()
-    return DistillBERTSentimentProvider()
+        return sentiment_analysis.RoBERTaSentimentProvider()
+    return sentiment_analysis.DistillBERTSentimentProvider()

@@ -1,7 +1,7 @@
-from utility_modules import utils
+from utility_modules import parsers
 from dash import Dash
 
 APP = Dash(__name__)
-CLI_ARGUMENTS = utils.parse_cli_arguments()
-HOST = utils.HostParser().parse_url(CLI_ARGUMENTS.url)
-DOMAIN = utils.DomainParser().parse_url(CLI_ARGUMENTS.url)
+CLI_ARGUMENTS = parsers.parse_cli_arguments()
+HOST = parsers.HostParser().parse_url(CLI_ARGUMENTS.url)
+DOMAIN = parsers.DomainParser().parse_url(CLI_ARGUMENTS.url)
