@@ -1,5 +1,6 @@
 import json
 import os.path
+import visualisation_modules.app as app
 from utility_modules.constants import CLI_ARGUMENTS, DOMAIN
 from utility_modules import factories
 
@@ -26,3 +27,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    app.run_app()
