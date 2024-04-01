@@ -2,15 +2,15 @@ from data_modules import connection
 from data_modules import extraction
 from utility_modules import utils
 from utility_modules import config
-from utility_modules.constants import host, domain
+from utility_modules.constants import HOST, DOMAIN
 
 
 def get_setup_client() -> config.CredentialsConfigurator:
     credential_setup_factories = {
-        "reddit": config.RedditCredentialSetup(),
-        "youtube": config.YoutubeCredentialSetup()
+        "reddit": config.RedditCredentialConfigurator(),
+        "youtube": config.YoutubeCredentialConfigurator()
     }
-    return credential_setup_factories[domain]
+    return credential_setup_factories[DOMAIN]
 
 
 def get_url_parser() -> utils.URLParser:
@@ -19,7 +19,7 @@ def get_url_parser() -> utils.URLParser:
             "www.reddit.com": utils.RedditUrlParser(),
             "www.youtube.com": utils.YoutubeUrlParser()
         }
-        return url_parser_factories[host]
+        return url_parser_factories[HOST]
     except KeyError as e:
         raise e
 
@@ -30,7 +30,7 @@ def get_connector() -> connection.ApiConnector:
             "www.reddit.com": connection.RedditApiConnector(),
             "www.youtube.com": connection.YoutubeApiConnector()
         }
-        return api_connector_factories[host]
+        return api_connector_factories[HOST]
     except KeyError as e:
         raise e
 
@@ -41,7 +41,7 @@ def get_extractor(client) -> extraction.DataExtractor:
             "www.reddit.com": extraction.RedditExtractor(client=client),
             "www.youtube.com": extraction.YoutubeExtractor(client=client)
         }
-        return data_extractor_factories[host]
+        return data_extractor_factories[HOST]
     except KeyError as e:
         raise e
 

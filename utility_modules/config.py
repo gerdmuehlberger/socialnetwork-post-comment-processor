@@ -11,7 +11,7 @@ class CredentialsConfigurator(ABC):
         pass
 
 
-class RedditCredentialSetup(CredentialsConfigurator):
+class RedditCredentialConfigurator(CredentialsConfigurator):
     def __init__(self) -> None:
         super().__init__()
     
@@ -42,7 +42,7 @@ class RedditCredentialSetup(CredentialsConfigurator):
             json.dump(credentials, config_file)
 
 
-class YoutubeCredentialSetup(CredentialsConfigurator):
+class YoutubeCredentialConfigurator(CredentialsConfigurator):
     def __init__(self) -> None:
         super().__init__()
 
