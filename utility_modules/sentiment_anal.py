@@ -1,12 +1,7 @@
-import logging
-import os
 from functools import lru_cache
 from abc import ABC, abstractmethod
 from transformers import pipeline, AutoTokenizer
 from pandas import DataFrame
-
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-logging.getLogger('transformers').setLevel(logging.ERROR)
 
 
 class SentimentProvider(ABC):
