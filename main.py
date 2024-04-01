@@ -25,12 +25,11 @@ def main():
     sentiment_provider = SentimentProviderFactory.get_provider(
         cliArguments.sentiment_provider
     )
-    raw_dataframe['sentiment_label'] = raw_dataframe['text'].apply(
-        lambda x: sentiment_provider.get_label(x))
-    raw_dataframe['sentiment_score'] = raw_dataframe['text'].apply(
-        lambda x: sentiment_provider.get_sentiment_score(x))
+    dataframe_with_sentiment = sentiment_provider.infer_labels_and_scores(
+        raw_dataframe
+    )
 
-    print(raw_dataframe.head(5))
+    print(dataframe_with_sentiment.head(5))
 
 
 if __name__ == "__main__":

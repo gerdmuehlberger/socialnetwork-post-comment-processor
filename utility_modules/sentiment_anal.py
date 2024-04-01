@@ -3,6 +3,7 @@ import os
 from functools import lru_cache
 from abc import ABC, abstractmethod
 from transformers import pipeline, AutoTokenizer
+from pandas import DataFrame
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 logging.getLogger('transformers').setLevel(logging.ERROR)
@@ -21,6 +22,16 @@ class SentimentProvider(ABC):
     def get_sentiment_score(self, string_to_score: str) -> float:
         return 0.
 
+    def infer_labels_and_scores(
+            self,
+            dataframe: DataFrame,
+            text_column: str = 'text'
+    ) -> DataFrame:
+        dataframe['sentiment_label'] = dataframe[text_column].apply(
+            lambda x: self.get_label(x))
+        dataframe['sentiment_score'] = dataframe[text_column].apply(
+            lambda x: self.get_sentiment_score(x))
+
 
 class DistillBertSentimentProvider(SentimentProvider):
     @lru_cache(maxsize=10)
@@ -35,20 +46,20 @@ class DistillBertSentimentProvider(SentimentProvider):
 
     @lru_cache(maxsize=1000)
     def _cached_sentiment_analysis(self, text: str):
-        truncated_tokens = self.get_truncated_tokens(text=text)
-        return self.sentiment_pipeline(truncated_tokens)[0]
+        truncated_text = self.get_truncated_text(text=text)
+        return self.sentiment_pipeline(truncated_text)[0]
 
-    def get_truncated_tokens(self, text):
+    def get_truncated_text(self, text: str) -> str:
         tokens = self.tokenizer.encode(
             text, add_special_tokens=True, truncation=True, max_length=512)
         return self.tokenizer.decode(
             tokens, skip_special_tokens=True)
 
-    def get_label(self, string_to_classify: str) -> str:
+    def infer_label(self, string_to_classify: str) -> str:
         result = self._cached_sentiment_analysis(string_to_classify)
         return result['label']
 
-    def get_sentiment_score(self, string_to_score: str) -> float:
+    def infer_sentiment_score(self, string_to_score: str) -> float:
         result = self._cached_sentiment_analysis(string_to_score)
         return result['score']
 
