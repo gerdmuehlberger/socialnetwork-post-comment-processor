@@ -29,7 +29,7 @@ def main():
     dataframe_with_sentiment = sentiment_provider.infer_labels_and_scores(
         cleaned_dataframe
     )
-    
+    print(dataframe_with_sentiment)
     app.run_app(dataframe=dataframe_with_sentiment)
 
 

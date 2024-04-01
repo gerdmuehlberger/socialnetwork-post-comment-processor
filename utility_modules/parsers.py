@@ -5,7 +5,6 @@ import argparse
 from urllib.parse import urlparse
 from tldextract import extract
 from abc import ABC, abstractmethod
-from utility_modules import exceptions
 
 
 def parse_cli_arguments():
