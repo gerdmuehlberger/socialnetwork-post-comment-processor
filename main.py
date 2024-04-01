@@ -9,7 +9,8 @@ if os.path.isfile(f'./config/{domain}_config.json'):
     pass
 else:
     print(
-        f"\nCould not find config file for {domain} API client\n\nPlease set up your credentials for the {domain} API client first\n")
+        f"\nCould not find config file for {domain} API client\n\n\
+          Please set up your credentials for the {domain} API client first\n")
 
     config_setup_client = factories.get_setup_client()
     config_setup_client.set_credentials()
