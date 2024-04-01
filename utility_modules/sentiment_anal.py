@@ -91,13 +91,3 @@ class RoBERTaSentimentProvider(CachedSentimentProvider):
     def infer_score(self, string_to_score: str) -> float:
         result = self._cached_sentiment_analysis(string_to_score)
         return result['score']
-
-
-class SentimentProviderFactory:
-    @staticmethod
-    def get_provider(provider_type: str) -> CachedSentimentProvider:
-        if provider_type.lower() == "distillbert":
-            return DistillBERTSentimentProvider()
-        elif provider_type.lower() == "roberta":
-            return RoBERTaSentimentProvider()
-        return DistillBERTSentimentProvider()

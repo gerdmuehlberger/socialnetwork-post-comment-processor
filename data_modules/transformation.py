@@ -1,54 +1,61 @@
 from abc import ABC, abstractmethod
 import pandas as pd
+import re
 
 
-class DataTransformer(ABC):
+class AbstractDataCleaner(ABC):
     @abstractmethod
-    def __init__(self, dataframe: pd.DataFrame) -> None:
-        self.dataframe = dataframe
+    def __init__(self) -> None:
+        raise NotImplementedError()
 
     @abstractmethod
-    def remove_null_values(self) -> pd.DataFrame:
-        dataframe = self.dataframe
+    def clean_data(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def remove_null_values(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def remove_emojis_from_text(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def replace_usernames_with_generic(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        raise NotImplementedError()
+
+
+class BaseDataCleaner(AbstractDataCleaner):
+    def __init__(self) -> None:
+        pass
+
+    def clean_data(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        dataframe = self.remove_null_values(dataframe)
+        dataframe = self.remove_emojis_from_text(dataframe)
+        dataframe = self.replace_usernames_with_generic(dataframe)
+        return dataframe
+
+    def remove_null_values(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        dataframe = dataframe
         dataframe = dataframe.dropna(how='any', axis=0)
         return dataframe
 
-    @abstractmethod
-    def remove_emojis_from_text(self) -> pd.DataFrame:
-        dataframe = self.dataframe
-        dataframe = dataframe.astype(str).apply(lambda x: x.str.encode('ascii', 'ignore').str.decode('ascii'))
+    def remove_emojis_from_text(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        dataframe = dataframe
+        dataframe = dataframe.astype(str).apply(
+            lambda x: x.str.encode('ascii', 'ignore').str.decode('ascii'))
         return dataframe
 
-    @abstractmethod
-    def noise_removal(dataframe:pd.DataFrame) -> pd.DataFrame:
-        pass
+
+class YoutubeDataCleaner(BaseDataCleaner):
+    def replace_usernames_with_generic(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        dataframe['text'] = dataframe['text'].apply(
+            lambda x: re.sub(r'@\w+', '@user', x))
+        return dataframe
 
 
-class YoutubeDataCleaner(DataTransformer):
-    def __init__(self, dataframe:pd.DataFrame) -> None:
-        super().__init__(dataframe=dataframe)
-        self.dataframe = dataframe
-
-    def remove_null_values(self) -> pd.DataFrame:
-        pass
-    
-    def remove_emojis_from_text(self) -> pd.DataFrame:
-        pass
-    
-    def noise_removal(self) -> pd.DataFrame:
-        pass
-
-
-class RedditDataCleaner(DataTransformer):
-    def __init__(self, dataframe:pd.DataFrame) -> None:
-        super().__init__(dataframe=dataframe)
-        self.dataframe = dataframe
-
-    def remove_null_values(self) -> pd.DataFrame:
-        return super().remove_null_values()
-        
-    def remove_emojis_from_text(self) -> pd.DataFrame:
-        return super().remove_emojis_from_text()
-    
-    def noise_removal(self) -> pd.DataFrame:
-        return super().noise_removal()
+class RedditDataCleaner(BaseDataCleaner):
+    def replace_usernames_with_generic(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        dataframe['text'] = dataframe['text'].apply(
+            lambda x: re.sub(r'u/\w+', '@user', x))
+        return dataframe
