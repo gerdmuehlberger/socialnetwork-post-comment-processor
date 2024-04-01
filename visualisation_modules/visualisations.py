@@ -7,8 +7,7 @@ from utility_modules.constants import APP
 
 class VisualisationModule(ABC):
     @abstractmethod
-    def __init__(self):
-    #def __init__(self, dataframe: pd.DataFrame):
+    def __init__(self, dataframe: pd.DataFrame) -> None:
         super().__init__()
 
     @abstractmethod
@@ -16,17 +15,24 @@ class VisualisationModule(ABC):
         pass
 
 
-class HistogramVisualisationModule(VisualisationModule):
+class BarChartVisualisationModule(VisualisationModule):
     def __init__(self) -> None:
         super().__init__()
 
-    def create_component() -> html:
+    def create_component(dataframe: pd.DataFrame, x_axis: pd.Series, y_axis: pd.Series) -> html:
         APP.layout = html.Div(
         children = [
-            html.H1(children="test"),
-            html.P(children="test paragraph")
+            dcc.Graph(
+                figure={"data":[
+                    {
+                        "x": x_axis,
+                        "y": y_axis,
+                        "type": "bar"
+                    }
+                ]}
+            )
         ]
-    )
+        )
 
 
 class WordcloudVisualisationModule(VisualisationModule):

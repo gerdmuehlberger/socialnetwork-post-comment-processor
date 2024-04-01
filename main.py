@@ -31,10 +31,10 @@ def main():
     dataframe_with_sentiment = sentiment_provider.infer_labels_and_scores(
         raw_dataframe
     )
-
-    print(dataframe_with_sentiment.head(5))
+    #print(dataframe_with_sentiment.head(5))
+    app.run_app(dataframe=dataframe_with_sentiment)
 
 
 if __name__ == "__main__":
     main()
-    app.run_app()
+    
