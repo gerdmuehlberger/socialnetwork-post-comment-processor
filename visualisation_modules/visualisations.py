@@ -2,11 +2,13 @@ import pandas as pd
 from abc import ABC, abstractmethod
 from dash import html
 from dash import dcc
+from utility_modules.constants import APP 
 
 
 class VisualisationModule(ABC):
     @abstractmethod
-    def __init__(self, dataframe: pd.Dataframe):
+    def __init__(self):
+    #def __init__(self, dataframe: pd.DataFrame):
         super().__init__()
 
     @abstractmethod
@@ -19,7 +21,12 @@ class HistogramVisualisationModule(VisualisationModule):
         super().__init__()
 
     def create_component() -> html:
-        pass
+        APP.layout = html.Div(
+        children = [
+            html.H1(children="test"),
+            html.P(children="test paragraph")
+        ]
+    )
 
 
 class WordcloudVisualisationModule(VisualisationModule):
