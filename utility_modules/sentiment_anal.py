@@ -29,7 +29,7 @@ class SentimentProvider(ABC):
     ) -> DataFrame:
         dataframe['sentiment_label'] = dataframe[text_column].apply(
             lambda x: self.infer_label(x))
-        dataframe['sentiment_score'] = dataframe[text_column].apply(
+        dataframe['sentiment_confidence'] = dataframe[text_column].apply(
             lambda x: self.infer_score(x))
         return dataframe
 
