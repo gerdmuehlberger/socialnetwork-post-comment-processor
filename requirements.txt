@@ -1,7 +1,7 @@
+dash==2.16.1
 google_api_python_client==2.123.0
 pandas==2.0.3
 praw==7.7.1
 Requests==2.31.0
 tldextract==5.1.2
 transformers==4.39.2
-torch==2.2.2
