@@ -15,9 +15,6 @@ def parse_cli_arguments():
     )
     parser.add_argument('--url', type=str,
                         help='URL of the post you want to analyse.')
-    parser.add_argument('--sentiment_provider', type=str,
-                        help='Which local sentiment module to use.',
-                        default='roberta')
     parser.add_argument('--raw_data',
                         type=str,
                         default='false',

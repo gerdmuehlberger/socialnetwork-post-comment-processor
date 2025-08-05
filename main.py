@@ -1,6 +1,5 @@
 import json
 import os.path
-import visualisation_modules.app as app
 from utility_modules.constants import CLI_ARGUMENTS, DOMAIN
 from utility_modules import factories
 
@@ -23,14 +22,8 @@ def main():
 
     raw_dataframe = extractor.fetch_raw_comments_dataframe(url)
     cleaned_dataframe = factories.get_data_cleaner().clean_data(raw_dataframe)
-    sentiment_provider = factories.get_sentiment_provider(
-        CLI_ARGUMENTS.sentiment_provider
-    )
-    dataframe_with_sentiment = sentiment_provider.infer_labels_and_scores(
-        cleaned_dataframe
-    )
     
-    app.run_app(dataframe=dataframe_with_sentiment)
+    print(cleaned_dataframe.head(10))
 
 
 if __name__ == "__main__":

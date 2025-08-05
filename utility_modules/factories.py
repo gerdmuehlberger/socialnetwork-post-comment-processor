@@ -2,7 +2,6 @@ from utility_modules.constants import HOST, DOMAIN
 from data_modules import connection
 from data_modules import extraction
 from data_modules import transformation
-from data_modules import sentiment_analysis
 from utility_modules import parsers
 from utility_modules import config
 
@@ -57,11 +56,3 @@ def get_extractor(client) -> extraction.DataExtractor:
         return data_extractor_factories[HOST]
     except KeyError as e:
         raise e
-
-
-def get_sentiment_provider(provider_type: str) -> sentiment_analysis.CachedSentimentProvider:
-    if provider_type.lower() == "distillbert":
-        return sentiment_analysis.DistillBERTSentimentProvider()
-    elif provider_type.lower() == "roberta":
-        return sentiment_analysis.RoBERTaSentimentProvider()
-    return sentiment_analysis.DistillBERTSentimentProvider()
