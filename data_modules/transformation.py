@@ -37,25 +37,28 @@ class BaseDataCleaner(AbstractDataCleaner):
 
     def remove_null_values(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         dataframe = dataframe
-        dataframe = dataframe.dropna(how='any', axis=0)
+        dataframe = dataframe.dropna(how="any", axis=0)
         return dataframe
 
     def remove_emojis_from_text(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         dataframe = dataframe
         dataframe = dataframe.astype(str).apply(
-            lambda x: x.str.encode('ascii', 'ignore').str.decode('ascii'))
+            lambda x: x.str.encode("ascii", "ignore").str.decode("ascii")
+        )
         return dataframe
 
 
 class YoutubeDataCleaner(BaseDataCleaner):
     def replace_usernames_with_generic(self, dataframe: pd.DataFrame) -> pd.DataFrame:
-        dataframe['text'] = dataframe['text'].apply(
-            lambda x: re.sub(r'@\w+', '@user', x))
+        dataframe["text"] = dataframe["text"].apply(
+            lambda x: re.sub(r"@\w+", "@user", x)
+        )
         return dataframe
 
 
 class RedditDataCleaner(BaseDataCleaner):
     def replace_usernames_with_generic(self, dataframe: pd.DataFrame) -> pd.DataFrame:
-        dataframe['text'] = dataframe['text'].apply(
-            lambda x: re.sub(r'u/\w+', '@user', x))
+        dataframe["text"] = dataframe["text"].apply(
+            lambda x: re.sub(r"u/\w+", "@user", x)
+        )
         return dataframe
