@@ -1,7 +1,9 @@
+import os
 from utility_modules.constants import HOST, DOMAIN
 from data_modules import connection
 from data_modules import extraction
 from data_modules import transformation
+from data_modules import export
 from utility_modules import parsers
 from utility_modules import config
 
@@ -56,3 +58,17 @@ def get_extractor(client) -> extraction.DataExtractor:
         return data_extractor_factories[HOST]
     except KeyError as e:
         raise e
+
+
+def get_exporter(path: str) -> export.DataExporter:
+    data_exporter_factories = {
+        "csv": export.CsvExporter(),
+    }
+    file_format = os.path.splitext(path)[1].lstrip(".").lower()
+    try:
+        return data_exporter_factories[file_format]
+    except KeyError:
+        raise ValueError(
+            f"Unsupported output format '{file_format}'. Supported formats: "
+            f"{', '.join(data_exporter_factories)}"
+        )

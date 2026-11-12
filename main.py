@@ -17,6 +17,9 @@ else:
 
 
 def main():
+    if CLI_ARGUMENTS.output:
+        exporter = factories.get_exporter(CLI_ARGUMENTS.output)
+
     config = json.load(open(f"./config/{DOMAIN}_config.json"))
     client = factories.get_connector().connect(config_file=config)
     url = factories.get_url_parser().parse_url(CLI_ARGUMENTS.url)
@@ -26,6 +29,10 @@ def main():
     cleaned_dataframe = factories.get_data_cleaner().clean_data(raw_dataframe)
 
     print(cleaned_dataframe.head(10))
+
+    if CLI_ARGUMENTS.output:
+        exporter.export(cleaned_dataframe, CLI_ARGUMENTS.output)
+        print(f"\nWrote {len(cleaned_dataframe)} comments to {CLI_ARGUMENTS.output}")
 
 
 if __name__ == "__main__":

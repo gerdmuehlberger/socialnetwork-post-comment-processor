@@ -20,6 +20,12 @@ def parse_cli_arguments():
         help="Retrieve raw dataset instead of a cleaned one.",
         choices=["true", "false"],
     )
+    parser.add_argument(
+        "--output",
+        type=str,
+        default=None,
+        help="Path of the file to write the dataset to. The file extension determines the format (e.g. .csv).",
+    )
     args = parser.parse_args()
     return args
 

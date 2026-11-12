@@ -169,3 +169,6 @@ config/*
 # misc
 goal.md
 tests.ipynb
+
+# macOS
+.DS_Store
