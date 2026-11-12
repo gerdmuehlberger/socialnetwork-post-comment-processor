@@ -1,9 +1,10 @@
 import re
 import sys
-import requests
 import argparse
 from urllib.parse import urlparse
 from tldextract import extract
+from praw.exceptions import InvalidURL
+from praw.models import Submission
 from abc import ABC, abstractmethod
 
 
@@ -72,12 +73,9 @@ class RedditUrlParser(URLParser):
         super().__init__()
 
     def parse_url(self, url) -> str:
-        response = requests.get(url)
-        if response.status_code == 200:
-            return url
-        else:
-            print(
-                "The URL you entered seems invalid. Please enter a valid Reddit URL. Status code: ",
-                response.status_code,
-            )
+        try:
+            # returns submission id from reddit url
+            return Submission.id_from_url(url)
+        except InvalidURL:
+            print("The URL you entered seems invalid. Please enter a valid Reddit URL.")
             sys.exit()

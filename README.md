@@ -65,6 +65,8 @@ python main.py --url "<post url>" [--output <output file>]
 
 The first 10 rows of the cleaned dataset are always printed to the terminal.
 
+For Reddit, every comment of the post is fetched, including all "load more comments" and "continue this thread" branches. Each branch costs one API request and Reddit allows roughly 100 requests per minute, so large threads can take several minutes. The number of requests made is shown while loading. Temporary Reddit errors (server errors, timeouts, rate limiting) are retried up to 5 times with increasing delays, and the fetch resumes where it stopped.
+
 **Examples**
 ```bash
 python main.py --url "https://www.reddit.com/r/<subreddit>/comments/<id>/<slug>/" --output reddit_comments.csv

@@ -22,10 +22,10 @@ def main():
 
     config = json.load(open(f"./config/{DOMAIN}_config.json"))
     client = factories.get_connector().connect(config_file=config)
-    url = factories.get_url_parser().parse_url(CLI_ARGUMENTS.url)
+    content_id = factories.get_url_parser().parse_url(CLI_ARGUMENTS.url)
     extractor = factories.get_extractor(client)
 
-    raw_dataframe = extractor.fetch_raw_comments_dataframe(url)
+    raw_dataframe = extractor.fetch_raw_comments_dataframe(content_id)
     cleaned_dataframe = factories.get_data_cleaner().clean_data(raw_dataframe)
 
     print(cleaned_dataframe.head(10))
