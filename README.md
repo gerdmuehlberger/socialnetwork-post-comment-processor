@@ -28,7 +28,7 @@ pip install -r requirements.txt
 ### 3. Set up API credentials
 Credentials are stored in `config/<client>_config.json`, relative to the directory you run the script from (the repo root). The `config/` directory is git-ignored.
 
-If the config file is missing on the first run, the script will prompt you for the credentials and create it for you.
+If the config file is missing on the first run, the script will prompt you for the credentials and create it for you. To re-enter credentials, edit the file or delete it and run the script again.
 
 **Reddit** (`config/reddit_config.json`)
 
@@ -46,7 +46,7 @@ Create a *script* app at https://old.reddit.com/prefs/apps/, then provide:
 
 **YouTube** (`config/youtube_config.json`)
 
-Create an API key at https://console.cloud.google.com/apis/dashboard with the YouTube Data API v3 enabled:
+Create an API key at https://console.cloud.google.com/apis/credentials in a project with the YouTube Data API v3 enabled:
 ```json
 {
   "youtube_api_key": "YOUR_API_KEY"
@@ -60,12 +60,14 @@ python main.py --url "<post url>" [--output <output file>]
 
 | Flag | Description |
 | --- | --- |
-| `--url` | URL of the Reddit post or YouTube video. Reddit URLs must use `www.reddit.com`. |
+| `--url` | URL of the Reddit post or YouTube video. Reddit URLs must use `www.reddit.com`, YouTube URLs must use `www.youtube.com` (`/watch?v=...` or `/shorts/...`). Short links such as `redd.it` or `youtu.be` and other hosts such as `m.youtube.com` are not supported. |
 | `--output` | Optional. Path of the file to write the dataset to. The file extension selects the format (supported: `.csv`). |
 
 The first 10 rows of the cleaned dataset are always printed to the terminal.
 
 For Reddit, every comment of the post is fetched, including all "load more comments" and "continue this thread" branches. Each branch costs one API request and Reddit allows roughly 100 requests per minute, so large threads can take several minutes. The number of requests made is shown while loading. Temporary Reddit errors (server errors, timeouts, rate limiting) are retried up to 5 times with increasing delays, and the fetch resumes where it stopped.
+
+For YouTube, only the first page of top-level comments (20 by default) is fetched, without replies.
 
 **Examples**
 ```bash
@@ -109,6 +111,15 @@ EOF
 The output should be a valid CSV with the comma and quotes in the second comment escaped.
 
 Remove the test files afterwards with `rm test.csv offline.csv`.
+
+## Troubleshooting
+**YouTube: "The URL you entered seems invalid"**
+
+This message is currently shown for any YouTube API error, not only for invalid URLs. If the URL is in a supported format, check that:
+- the API key in `config/youtube_config.json` is valid and the YouTube Data API v3 is enabled for its project
+- comments are enabled on the video
+- the video is public and not age-restricted or region-locked
+- the daily API quota is not exhausted
 
 ## Adding an output format
 Exporters follow the same factory pattern as the API clients:
